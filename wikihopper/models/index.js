@@ -14,7 +14,11 @@ var Page = db.define('page', {
         type: Sequelize.STRING, allowNull: false, defaultValue: "Page Title"
     },
     urlTitle: {
-        type: Sequelize.STRING, allowNull: false, isUrl: true, defaultValue: "This should be a URL"
+        type: Sequelize.STRING, allowNull: false, isUrl: true, defaultValue: "This_should_be_a_URL",
+        get: function () {
+            var wikiUrl = this.getDataValue('urlTitle');
+            return '/wiki/' + wikiUrl;
+        }
     },
     content: {
         type: Sequelize.TEXT, allowNull: false, defaultValue: "This is an example of content"
@@ -25,6 +29,12 @@ var Page = db.define('page', {
     date: {
         type: Sequelize.DATE, defaultValue: Sequelize.NOW
     }
+// }, {
+//     hooks: {
+//         beforeValidate: function (page) {
+//             page.urlTitle = generateUrlTitle(page.title);
+//         }
+//     }
 });
 
 var User = db.define('user', {
@@ -36,7 +46,23 @@ var User = db.define('user', {
     }
 });
 
+Page.hook('beforeValidate', function (page) {
+    page.urlTitle = generateUrlTitle(page.title);
+    return page;
+  });
+
+Page.belongsTo(User, { as: 'author' });
+
+function generateUrlTitle (title) {
+  if (title) {
+    return title.replace(/\s+/g, '_').replace(/\W/g, '');
+  } else {
+    return Math.random().toString(36).substring(2, 7);
+  }
+}
+
 module.exports = {
   Page: Page,
-  User: User
+  User: User,
+  generateUrlTitle: generateUrlTitle
 };

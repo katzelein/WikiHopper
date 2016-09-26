@@ -1,9 +1,17 @@
 {% extends "layout.html" %}
 
 {% block content %}
-  <h3>Pages</h3>
+
+  <h1>"HI THERE</h1>
+  <h1>"HI THERE</h1>
+  <h1>"HI THERE</h1>
+  <h3>All Pages</h3>
   <hr>
   <ul class="list-unstyled">
-    <!-- PLACEHOLDER LIST OF PAGES -->
+  <li>These are all the pages on WikiHopper!</li>
+    {% for page in pages %}
+      <li><a href={{page.urlTitle}}>{{page.title}}</a></li>
+    {% endfor %}
   </ul>
+
 {% endblock %}
